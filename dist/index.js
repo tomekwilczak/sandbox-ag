@@ -18,8 +18,8 @@
     $('[form-element="error-text"]').hide();
     $('[form-element="required"]').removeClass("error-state");
     const fieldError = function(field) {
-      field.siblings('[form-element="error-text"]').show();
       console.log("There are some errors");
+      field.siblings('[form-element="error-text"]').show();
       field.addClass("error-state");
       formErrors = true;
     };
@@ -53,14 +53,6 @@
     });
     $('[form-element="submit"]').click(function() {
       console.log("Clicked");
-      $('[form-element="required"]').each(function() {
-        if ($(this).val().length === 0) {
-          fieldError($(this));
-        } else if ($(this).attr("type") === "email" && // Validation for email fields
-        ($(this).val().indexOf("@") === -1 || $(this).val().indexOf(".") === -1)) {
-          fieldError($(this));
-        }
-      });
       if (!$radios_channel.is(":checked")) {
         $('[form-element="error-text-radio-channel"]').show();
         console.log("Channel: Zaznacz 1 z radio button\xF3w");
@@ -77,6 +69,14 @@
         $('[form-element="error-text-radio-address"]').hide();
         formErrors = false;
       }
+      $('[form-element="required"]').each(function() {
+        if ($(this).val().length === 0) {
+          fieldError($(this));
+        } else if ($(this).attr("type") === "email" && // Validation for email fields
+        ($(this).val().indexOf("@") === -1 || $(this).val().indexOf(".") === -1)) {
+          fieldError($(this));
+        }
+      });
       if (!formErrors) {
         console.log(formErrors);
         $(this).parents("form").submit(function(e) {
