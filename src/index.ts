@@ -1,4 +1,4 @@
-// Wersja 16.05 EOD: działa channel redirect, email oraz SMS z walidacją telefonu (formatowanie do poprawienia). Nie działa dobrze walidacja wymaganych pól, tzn. pokazują się walidacje, ale formularz wysyła się bez wypełnienia pól,
+// Wersja 16.05 EOD: działa channel redirect, email oraz SMS z walidacją telefonu (formatowanie do poprawienia). Nie działa dobrze walidacja wymaganych pól adresowych, tzn. pokazują się walidacje, ale po wpisaniu nie znikają error-state i error-text.
 // wystarczy jak zaznaczy się radio buttony (czyli one generują błąd).
 
 window.Webflow ||= [];
@@ -18,10 +18,10 @@ window.Webflow.push(() => {
   $('[form-element="error-text"]').hide();
   $('[form-element="required"]').removeClass('error-state');
 
-  // Add proper classes when field is empty
+  // Add proper classes to a 'field' when 'field' is empty and set formError to true
   const fieldError = function (field) {
-    field.siblings('[form-element="error-text"]').show(); // Show error message
     console.log('There are some errors');
+    field.siblings('[form-element="error-text"]').show(); // Show error message
     field.addClass('error-state'); // Add error state to this field
     formErrors = true;
   };
@@ -70,6 +70,26 @@ window.Webflow.push(() => {
   // Click on the Submit button
   $('[form-element="submit"]').click(function () {
     console.log('Clicked');
+
+    // Check if at least 1 radio button is selected
+    if (!$radios_channel.is(':checked')) {
+      $('[form-element="error-text-radio-channel"]').show();
+      console.log('Channel: Zaznacz 1 z radio buttonów');
+      formErrors = true;
+    } else {
+      $('[form-element="error-text-radio-channel"]').hide();
+      formErrors = false;
+    }
+
+    if (!$radios_address.is(':checked')) {
+      $('[form-element="error-text-radio-address"]').show();
+      console.log('Address: Zaznacz 1 z radio buttonów');
+      formErrors = true;
+    } else {
+      $('[form-element="error-text-radio-address"]').hide();
+      formErrors = false;
+    }
+
     // Check each required field
     $('[form-element="required"]').each(function () {
       if ($(this).val().length === 0) {
@@ -82,28 +102,6 @@ window.Webflow.push(() => {
         fieldError($(this));
       }
     });
-
-    // Check if at least 1 radio button is selected
-    if (!$radios_channel.is(':checked')) {
-      // e.preventDefault(); // Prevent form submission
-      $('[form-element="error-text-radio-channel"]').show();
-      console.log('Channel: Zaznacz 1 z radio buttonów');
-      formErrors = true;
-    } else {
-      $('[form-element="error-text-radio-channel"]').hide();
-      formErrors = false;
-    }
-
-    if (!$radios_address.is(':checked')) {
-      $('[form-element="error-text-radio-address"]').show();
-      console.log('Address: Zaznacz 1 z radio buttonów');
-      // return false;
-      formErrors = true;
-      // return false;
-    } else {
-      $('[form-element="error-text-radio-address"]').hide();
-      formErrors = false;
-    }
     // Submit parent form if there are no errors
 
     if (!formErrors) {
